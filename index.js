@@ -10,18 +10,15 @@ const {dbConnection} = require('./database/config');
 const app = express();
 //configurar CORS (Midleware) 
 app.use(cors());
+//lectura y parseo del body
+app.use(express.json());
 //llamar a la BDD
 dbConnection();
 
 //rutas
 
-app.get('/', (req, res) => {
-
-    res.json({
-        ok: true,
-        msg: 'Hola mundo'
-    })
-});
+app.use('/api/usuarios', require('./routers/usuarios'));
+app.use('/api/login', require('./routers/auth'));
 
 //puerto
 
