@@ -1,63 +1,38 @@
 const { response } = require('express');
 const bcrypt = require('bcryptjs');
-const Usuario = require('../models/usuario');
-const usuario = require('../models/usuario');
+const Medico = require('../models/medico');
 const { generarJWT } = require('../helpers/jwt');
 
 
 
 
-//obtener todos los usuarios 
-const getUsuarios = async (req, res) => {
+//obtener todos los medicos 
+const getMedicos = async (req, res) => {
 
-    const desde = Number(req.query.desde) || 0;
-    console.log(desde);
-
-   /*  const usuarios = await Usuario.find({}, 'nombre email role google').skip(desde).limit(5);
-    const total = await Usuario.count();
- */
-    //forma mas eficiente de hacer paginacion y conteo
-    const [usuarios, total] = await Promise.all([
-        Usuario.find({}, 'nombre email role google img').skip(desde).limit(5),
-        Usuario.countDocuments()
-    ]);
-
+    const medicos = await Medico.find().populate('usuario','nombre').populate('hospital','nombre');
 
     res.json({
         ok: true,
-        usuarios,
-        uid: req.uid,
-        total
-
+        medicos
+        
     })
 };
-//crear un usuario 
-const crearUsuarios = async (req, res = response) => {
+//crear un medico 
+const crearMedicos = async (req, res = response) => {
 
-    //console.log(req.body);
-    const { password, email } = req.body;
+    const uid= req.uid;
+
     try {
-        const existeEmail = await Usuario.findOne({ email });
-        if (existeEmail) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'El correo ya esta registrado'
-            });
-        }
-
-        const usuario = new Usuario(req.body);
-        //Encriptar contraseña
-        const salt = bcrypt.genSaltSync();
-        usuario.password = bcrypt.hashSync(password, salt);
+        const medico = new Medico({
+            usuario: uid,
+            ...req.body
+        });
 
 
-        await usuario.save();
-        //Generar el TOKEN-JWT
-        const token = await generarJWT(usuario.id);
+        const medicoDB= await medico.save();
         res.json({
             ok: true,
-            usuario,
-            token
+            medico: medicoDB
         })
 
     } catch (error) {
@@ -69,8 +44,8 @@ const crearUsuarios = async (req, res = response) => {
 
 };
 
-//actualizar un usuario
-const actualizarUsuarios = async (req, res = response) => {
+//actualizar un medico
+const actualizarMedicos = async (req, res = response) => {
 
     const uid = req.params.id;
     try {
@@ -115,8 +90,8 @@ const actualizarUsuarios = async (req, res = response) => {
     }
 };
 
-//borrar usuarios
-const deleteUsuarios = async (req, res = response) => {
+//borrar medicos
+const deleteMedicos = async (req, res = response) => {
 
     const uid = req.params.id;
     try {
@@ -145,8 +120,8 @@ const deleteUsuarios = async (req, res = response) => {
 
 
 module.exports = {
-    getUsuarios,
-    crearUsuarios,
-    actualizarUsuarios,
-    deleteUsuarios
+    getMedicos,
+    crearMedicos,
+    actualizarMedicos,
+    deleteMedicos
 };

@@ -2,7 +2,6 @@ require('dotenv').config();
 const cors = require('cors');
 const { response } = require('express');
 const express = require('express');
-
 const {dbConnection} = require('./database/config');
 
 
@@ -18,6 +17,10 @@ dbConnection();
 //rutas
 
 app.use('/api/usuarios', require('./routers/usuarios'));
+app.use('/api/hospitales', require('./routers/hospitales'));
+app.use('/api/medicos', require('./routers/medicos'));
+app.use('/api/todo', require('./routers/busquedas'));
+app.use('/api/upload', require('./routers/uploads'));
 app.use('/api/login', require('./routers/auth'));
 
 //puerto
