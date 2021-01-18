@@ -14,6 +14,9 @@ app.use(express.json());
 //llamar a la BDD
 dbConnection();
 
+//directorio publico
+app.use(express.static('public'));
+
 //rutas
 
 app.use('/api/usuarios', require('./routers/usuarios'));
