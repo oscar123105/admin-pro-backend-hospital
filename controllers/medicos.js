@@ -49,37 +49,22 @@ const actualizarMedicos = async (req, res = response) => {
 
     const uid = req.params.id;
     try {
-        const usuarioDB = await Usuario.findById(uid);
-        if (!usuarioDB) {
+        const medicoDB = await Medico.findById(uid);
+        if (!medicoDB) {
             return res.status(404).json({
                 ok: false,
-                msg: 'Usuario no existe con ese id'
+                msg: 'Medico no existe con ese id'
             });
         }
         //actualizaciones
 
         const campos = req.body;
-        //validacion en caso de existir mail en bdd
-        if (usuarioDB.email === req.body.email) {
-            delete campos.email;
-        } else {
-            const existeEmail = await Usuario.findOne({ email: req.body.email });
 
-            if (existeEmail) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'Ya existe un usuario con el email que esta actualizando'
-                });
-
-            }
-        }
-        delete campos.password;
-        delete campos.google;
-        const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, campos, { new: true });
+        const medicoActualizado = await Medico.findByIdAndUpdate(uid, campos, { new: true });
 
         res.json({
             ok: true,
-            usuario: usuarioActualizado
+            medico: medicoActualizado
         });
 
     } catch (error) {
@@ -95,19 +80,19 @@ const deleteMedicos = async (req, res = response) => {
 
     const uid = req.params.id;
     try {
-        const usuarioDB = await Usuario.findById(uid);
-        if (!usuarioDB) {
+        const medicoDB = await Medico.findById(uid);
+        if (!medicoDB) {
             return res.status(404).json({
                 ok: false,
-                msg: 'Usuario no existe con ese id'
+                msg: 'Medico no existe con ese id'
             });
         }
         //borrar
-        const borrarUsuario = await Usuario.findByIdAndDelete(uid);
+        const borrarMedico = await Medico.findByIdAndDelete(uid);
 
         res.json({
             ok: true,
-            msg: 'Usuario se elimino correctamente'
+            msg: 'Medico se elimino correctamente'
         });
 
     } catch (error) {
